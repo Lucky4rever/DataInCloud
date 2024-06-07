@@ -9,7 +9,8 @@
     "start": "docker-compose up --build",
     "database": "prisma studio",
     "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",
-    "test": "vitest --watch",
+    "test:posts": "vitest run tests/integration/post.test.ts",
+    "test:users": "vitest run tests/integration/user.test.ts",
     "migration": "prisma migrate dev --name init"
   },
   "devDependencies": {

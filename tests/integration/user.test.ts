@@ -1,22 +1,39 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, afterAll, beforeEach, beforeAll } from 'vitest';
 import request from 'supertest';
 import { app, prisma } from '../../src/server';
 
 beforeAll(async () => {
-  await prisma.post.deleteMany();
-  await prisma.user.deleteMany();
+  if (await prisma.user.count() <= 0 && !(await prisma.user.findFirst({ where: {id: 1} }))) {
+    await prisma.user.deleteMany();
 
-  await prisma.user.create({
-    data: {
-      id: 1,
-      name: 'Test User',
-      email: 'test@example.com',
-      birthdate: new Date('1990-01-01T00:00:00.000Z'),
-    },
-  });
+    await prisma.user.create({
+      data: {
+        id: 1,
+        name: 'Test User',
+        email: 'test.email@gmail.com',
+        birthdate: '1990-01-01T00:00:00.000Z',
+      }
+    });
+  }
+
+  if (await prisma.post.count() <= 0 && !(await prisma.post.findFirst({ where: {id: 1} }))) {
+    await prisma.post.deleteMany();
+
+    await prisma.post.create({
+      data: {
+        id: 1,
+        title: 'Test Post',
+        content: 'This is a test post',
+        createdAt: '2021-01-01T00:00:00.000Z',
+        userId: 1,
+      },
+    });
+  }
 });
 
 afterAll(async () => {
+  await prisma.user.deleteMany();
+  await prisma.post.deleteMany();
   await prisma.$disconnect();
 });
 
@@ -25,9 +42,10 @@ describe('POST /users', () => {
     const response = await request(app)
       .post('/users')
       .send({
+        id: 2,
         name: 'New User',
         email: 'newuser@example.com',
-        birthdate: new Date('1995-05-05T00:00:00.000Z'),
+        birthdate: '1995-05-05T00:00:00.000Z',
       });
 
     expect(response.status).toBe(201);
@@ -63,11 +81,11 @@ describe('GET /users', () => {
 describe('PUT /users/:id', () => {
   it('should update a user', async () => {
     const response = await request(app)
-      .put('/users/1')
+      .put(`/users/1`)
       .send({
         name: 'Updated User',
         email: 'updated@example.com',
-        birthdate: new Date('1990-01-01T00:00:00.000Z'),
+        birthdate: '1990-01-01T00:00:00.000Z',
       });
 
     expect(response.status).toBe(200);
@@ -80,7 +98,7 @@ describe('PUT /users/:id', () => {
       .send({
         name: 'Nonexistent User',
         email: 'noemail@example.com',
-        birthdate: new Date('1990-01-01T00:00:00.000Z'),
+        birthdate: '1990-01-01T00:00:00.000Z',
       });
 
     expect(response.status).toBe(404);
@@ -89,7 +107,7 @@ describe('PUT /users/:id', () => {
 
 describe('DELETE /users/:id', () => {
   it('should delete a user', async () => {
-    const response = await request(app).delete('/users/1');
+    const response = await request(app).delete(`/users/2`);
 
     expect(response.status).toBe(204);
   });

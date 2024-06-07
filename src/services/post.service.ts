@@ -15,8 +15,10 @@ class PostService {
     console.log(data);
     return prisma.post.create({
       data: {
+        id: data.id,
         title: data.title,
         content: data.content,
+        createdAt: data.createdAt,
         userId: data.userId,
       },
     });
