@@ -1,10 +1,9 @@
-// import express from "express";
-// import { PrismaClient } from '@prisma/client';
-// import AppRouter from "./routes";
-
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import dotenv from 'dotenv';
 import AppRouter from './routes/index';
+
+dotenv.config();
 
 const app = express();
 const prisma = new PrismaClient();

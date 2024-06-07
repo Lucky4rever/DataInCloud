@@ -6,6 +6,16 @@ beforeAll(async () => {
   await prisma.post.deleteMany();
   await prisma.user.deleteMany();
 
+  await prisma.post.create({
+    data: {
+      id: 1,
+      title: 'Test Post',
+      content: 'Content of the test post',
+      createdAt: new Date('1990-01-01T00:00:00.000Z'),
+      userId: 1,
+    },
+  });
+
   await prisma.user.create({
     data: {
       id: 1,
@@ -85,6 +95,8 @@ describe('GET /posts', () => {
   it('should return a single post by id', async () => {
     const response = await request(app).get('/posts/1');
 
+    console.log(response.body);
+
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('id', 1);
   });
@@ -94,6 +106,7 @@ describe('DELETE /posts/:id', () => {
   it('should delete a post', async () => {
     const response = await request(app).delete('/posts/1');
 
+    console.log(response.headers);
     expect(response.status).toBe(204);
   });
 

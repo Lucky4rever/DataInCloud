@@ -67,7 +67,7 @@ class PostController {
   async deletePost(req: Request, res: Response) {
     try {
       await this.service.deletePost(parseInt(req.params.id!));
-      res.status(204).send("Post deleted");
+      res.status(204).send();
     } catch (error) {
       res.status(404).send("Post not found");
     }
